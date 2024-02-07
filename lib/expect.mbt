@@ -91,7 +91,7 @@ pub fn includes[T : Eq + Debug](self : ExpectObj[List[T]], v : T) -> Bool {
   true
 }
 
-fn abs(a: Double) -> Double {
+fn abs(a : Double) -> Double {
   if a < 0.0 {
     -a
   } else {
@@ -99,26 +99,18 @@ fn abs(a: Double) -> Double {
   }
 }
 
-fn pow(a: Double, b: Int) -> Double {
-  let mut result = 1.0
-  for i = 0 ;i < b; i = i + 1 {
-    result = result * a
-  }
-
-  result
-}
-
-pub fn close_to(self: ExpectObj[Double], target: Double, digit: Int) -> Bool {
-  let diff = abs((self.received - target));
-  let acceptable_range = pow(0.1, digit);
-  let result = diff < acceptable_range;
+pub fn close_to(self : ExpectObj[Double], target : Double, tolerance : Double) ->
+     Bool {
+  let diff = abs(self.received - target)
+  let tolerance = abs(tolerance)
+  let result = diff < tolerance
   match self.reversed {
     false =>
       if not(result) {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
             "expected " + debug_string(self.received) + " to be close to " + debug_string(
               target,
-            ),
+            ) + " (±\(tolerance))",
           ).red().to_string()
         println(msg)
         println("")
@@ -136,9 +128,8 @@ pub fn close_to(self: ExpectObj[Double], target: Double, digit: Int) -> Bool {
     true =>
       if result {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to not be close to " + debug_string(
-              target,
-            ),
+            "expected " + debug_string(self.received) + " to not be close to " +
+            debug_string(target) + " (±\(tolerance))",
           ).red().to_string()
         println(msg)
         println("\n")
@@ -149,7 +140,6 @@ pub fn close_to(self: ExpectObj[Double], target: Double, digit: Int) -> Bool {
       }
   }
   true
-
 }
 
 pub fn expect[T : Eq + Show](t : T) -> ExpectObj[T] {

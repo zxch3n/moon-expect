@@ -23,10 +23,10 @@ test "includes" {
 }
 
 test "closeTo" {
-  assert(expect(1.0).close_to(1.0, 1))
-  assert(expect(1.0).not().close_to(1.0, 1) == false)
-  assert(expect(1.0).close_to(1.1, 1) == false)
-  assert(expect(1.0).not().close_to(1.1, 1))
+  assert(expect(1.0).close_to(1.0, 0.1))
+  assert(expect(1.0).not().close_to(1.0, 0.1) == false)
+  assert(expect(1.0).close_to(1.2, 0.1) == false)
+  assert(expect(1.0).not().close_to(1.2, 0.1))
   ()
 }
 
