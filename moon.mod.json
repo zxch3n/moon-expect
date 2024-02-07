@@ -2,8 +2,11 @@
   "name": "zxch3n/expect",
   "version": "0.1.0",
   "readme": "README.md",
-  "repository": "",
+  "repository": "https://github.com/zxch3n/moon-expect",
   "license": "Apache-2.0",
-  "keywords": [],
-  "description": ""
+  "keywords": [
+    "test",
+    "utils"
+  ],
+  "description": "`expect` is used to create various assertions easily"
 }
