@@ -30,7 +30,11 @@ pub fn not[T](self : Expect[T]) -> Expect[T] {
   }
 }
 
-pub fn equal[T : Eq + Show + Debug](self : Expect[T], expected : T) -> Bool {
+pub fn to_be[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
+  equal(self, expected)
+}
+
+pub fn equal[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
   match self.reversed {
     false =>
       if self.received != expected {
