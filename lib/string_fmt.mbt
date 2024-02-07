@@ -1,11 +1,11 @@
-struct Formated {
+priv struct Formated {
   str : String
   bg_color : Option[Color]
   color : Option[Color]
   formats : List[Format]
 }
 
-enum Format {
+priv enum Format {
   Bold
   Underline
   Blink
@@ -15,7 +15,7 @@ enum Format {
   Italic
 }
 
-enum Color {
+priv enum Color {
   Black
   Red
   Green

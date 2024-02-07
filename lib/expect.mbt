@@ -1,4 +1,4 @@
-struct ExpectObj[T] {
+struct Expect[T] {
   received : T
   reversed : Bool
 }
@@ -15,11 +15,11 @@ let testing_by_self : Array[Bool] = [false]
 /// expect(1).to_be_greater_than(2); // This will abort
 /// // AssertionError: expected 1 to be > 4
 /// ```
-pub fn expect[T](t : T) -> ExpectObj[T] {
+pub fn expect[T](t : T) -> Expect[T] {
   { received: t, reversed: false }
 }
 
-pub fn not[T](self : ExpectObj[T]) -> ExpectObj[T] {
+pub fn not[T](self : Expect[T]) -> Expect[T] {
   {
     received: self.received,
     reversed: if self.reversed {
@@ -30,7 +30,7 @@ pub fn not[T](self : ExpectObj[T]) -> ExpectObj[T] {
   }
 }
 
-pub fn equal[T : Eq + Show + Debug](self : ExpectObj[T], expected : T) -> Bool {
+pub fn equal[T : Eq + Show + Debug](self : Expect[T], expected : T) -> Bool {
   match self.reversed {
     false =>
       if self.received != expected {
@@ -72,7 +72,7 @@ pub fn equal[T : Eq + Show + Debug](self : ExpectObj[T], expected : T) -> Bool {
   true
 }
 
-pub fn includes[T : Eq + Debug](self : ExpectObj[List[T]], v : T) -> Bool {
+pub fn includes[T : Eq + Debug](self : Expect[List[T]], v : T) -> Bool {
   fn has(arr : List[T], v : T) -> Bool {
     match arr {
       Nil => false
@@ -133,7 +133,7 @@ fn contains(s : String, sub : String) -> Bool {
   false
 }
 
-pub fn to_match(self : ExpectObj[String], expected : String) -> Bool {
+pub fn to_match(self : Expect[String], expected : String) -> Bool {
   let has = contains(self.received, expected)
   match self.reversed {
     false =>
@@ -174,7 +174,7 @@ pub fn to_match(self : ExpectObj[String], expected : String) -> Bool {
   true
 }
 
-pub fn to_be_none[T : Debug](self : ExpectObj[Option[T]]) -> Bool {
+pub fn to_be_none[T : Debug](self : Expect[Option[T]]) -> Bool {
   let is_none = match self.received {
     None => true
     Some(_) => false
@@ -211,7 +211,7 @@ pub fn to_be_none[T : Debug](self : ExpectObj[Option[T]]) -> Bool {
   true
 }
 
-pub fn to_be_some[T : Debug](self : ExpectObj[Option[T]]) -> Bool {
+pub fn to_be_some[T : Debug](self : Expect[Option[T]]) -> Bool {
   let is_some = match self.received {
     Some(_) => true
     None => false
@@ -248,7 +248,7 @@ pub fn to_be_some[T : Debug](self : ExpectObj[Option[T]]) -> Bool {
   true
 }
 
-pub fn to_be_ok[T : Debug, D : Debug](self : ExpectObj[Result[T, D]]) -> Bool {
+pub fn to_be_ok[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   let is_ok = match self.received {
     Ok(_) => true
     Err(_) => false
@@ -285,7 +285,7 @@ pub fn to_be_ok[T : Debug, D : Debug](self : ExpectObj[Result[T, D]]) -> Bool {
   true
 }
 
-pub fn to_be_err[T : Debug, D : Debug](self : ExpectObj[Result[T, D]]) -> Bool {
+pub fn to_be_err[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   let is_err = match self.received {
     Err(_) => true
     Ok(_) => false
@@ -330,7 +330,7 @@ fn abs(a : Double) -> Double {
   }
 }
 
-pub fn close_to(self : ExpectObj[Double], target : Double, tolerance : Double) ->
+pub fn close_to(self : Expect[Double], target : Double, tolerance : Double) ->
      Bool {
   let diff = abs(self.received - target)
   let tolerance = abs(tolerance)
@@ -373,7 +373,7 @@ pub fn close_to(self : ExpectObj[Double], target : Double, tolerance : Double) -
   true
 }
 
-pub fn to_have_length[T : HasLength + Debug](self : ExpectObj[T], expected : Int) ->
+pub fn to_have_length[T : HasLength + Debug](self : Expect[T], expected : Int) ->
      Bool {
   let length = self.received.length()
   match self.reversed {
@@ -413,7 +413,7 @@ pub fn to_have_length[T : HasLength + Debug](self : ExpectObj[T], expected : Int
   true
 }
 
-enum CmpSymbol {
+priv enum CmpSymbol {
   Greater
   Less
   GreaterOrEqual
@@ -447,7 +447,7 @@ fn assert_cmp(self : CmpSymbol, cmp : Int) -> Bool {
   }
 }
 
-fn expect_cmp[T : Debug + Compare](received : ExpectObj[T], expected : T,
+fn expect_cmp[T : Debug + Compare](received : Expect[T], expected : T,
         expected_symbol : CmpSymbol) -> Bool {
   let mut expected_symbol = expected_symbol
   if received.reversed {
@@ -471,22 +471,22 @@ fn expect_cmp[T : Debug + Compare](received : ExpectObj[T], expected : T,
   is_correct
 }
 
-pub fn to_be_greater_than[T : Debug + Compare](self : ExpectObj[T], expected : T) ->
+pub fn to_be_greater_than[T : Debug + Compare](self : Expect[T], expected : T) ->
      Bool {
   expect_cmp(self, expected, CmpSymbol::Greater)
 }
 
-pub fn to_be_less_than[T : Debug + Compare](self : ExpectObj[T], expected : T) ->
+pub fn to_be_less_than[T : Debug + Compare](self : Expect[T], expected : T) ->
      Bool {
   expect_cmp(self, expected, CmpSymbol::Less)
 }
 
-pub fn to_be_less_than_or_equal[T : Debug + Compare](self : ExpectObj[T],
+pub fn to_be_less_than_or_equal[T : Debug + Compare](self : Expect[T],
         expected : T) -> Bool {
   expect_cmp(self, expected, CmpSymbol::LessOrEqual)
 }
 
-pub fn to_be_greater_than_or_equal[T : Debug + Compare](self : ExpectObj[T],
+pub fn to_be_greater_than_or_equal[T : Debug + Compare](self : Expect[T],
         expected : T) -> Bool {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
 }
