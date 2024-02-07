@@ -46,6 +46,41 @@ test "inc" {
   ()
 }
 
+test "option" {
+  let a : Option[Int] = Some(1)
+  let b : Option[Int] = None
+  assert(expect(a).to_be_none() == false)
+  assert(expect(b).to_be_some() == false)
+  assert(expect(a).not().to_be_some() == false)
+  assert(expect(b).not().to_be_none() == false)
+}
+
+test "expect ok" {
+  let a : Result[Int, Int] = Ok(1)
+  let b : Result[Int, Int] = Err(12)
+  assert(expect(a).to_be_ok())
+  assert(expect(b).to_be_err())
+  assert(expect(a).not().to_be_ok() == false)
+  assert(expect(b).not().to_be_err() == false)
+  assert(expect(a).to_be_err() == false)
+  assert(expect(b).to_be_ok() == false)
+}
+
+test "length" {
+  assert(expect("hello").to_have_length(5))
+  assert(expect("hello").to_have_length(6) == false)
+  assert(expect("hello").not().to_have_length(5) == false)
+}
+
+test "cmp" {
+  assert(expect(1).to_be_less_than(4))
+  assert(expect(1).to_be_less_than(0) == false)
+  assert(expect(1).to_be_greater_than(4) == false)
+  assert(expect(1).to_be_greater_or_equal_to(2) == false)
+  assert(expect(1).to_be_greater_or_equal_to(1))
+  assert(expect(1).not().to_be_greater_or_equal_to(1) == false)
+}
+
 fn called() -> () -> Int {
   let mut i = 0
   fn f() -> Int {

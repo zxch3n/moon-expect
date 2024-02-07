@@ -149,6 +149,154 @@ pub fn to_match(self : ExpectObj[String], expected : String) -> Bool {
   true
 }
 
+pub fn to_be_none[T : Debug](self : ExpectObj[Option[T]]) -> Bool {
+  let is_none = match self.received {
+    None => true
+    Some(_) => false
+  }
+  match self.reversed {
+    false =>
+      if not(is_none) {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to be None",
+          ).red().to_string()
+        println(msg)
+        println("")
+        print_string(format("Received: ").red().to_string())
+        println(format(debug_string(self.received)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+    true =>
+      if is_none {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to not be None",
+          ).red().to_string()
+        println(msg)
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+  }
+  true
+}
+
+pub fn to_be_some[T : Debug](self : ExpectObj[Option[T]]) -> Bool {
+  let is_some = match self.received {
+    Some(_) => true
+    None => false
+  }
+  match self.reversed {
+    false =>
+      if not(is_some) {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to be Some",
+          ).red().to_string()
+        println(msg)
+        println("")
+        print_string(format("Received: ").red().to_string())
+        println(format(debug_string(self.received)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+    true =>
+      if is_some {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to not be Some",
+          ).red().to_string()
+        println(msg)
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+  }
+  true
+}
+
+pub fn to_be_ok[T : Debug, D : Debug](self : ExpectObj[Result[T, D]]) -> Bool {
+  let is_ok = match self.received {
+    Ok(_) => true
+    Err(_) => false
+  }
+  match self.reversed {
+    false =>
+      if not(is_ok) {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to be Ok",
+          ).red().to_string()
+        println(msg)
+        println("")
+        print_string(format("Received: ").red().to_string())
+        println(format(debug_string(self.received)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+    true =>
+      if is_ok {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to not be Ok",
+          ).red().to_string()
+        println(msg)
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+  }
+  true
+}
+
+pub fn to_be_err[T : Debug, D : Debug](self : ExpectObj[Result[T, D]]) -> Bool {
+  let is_err = match self.received {
+    Err(_) => true
+    Ok(_) => false
+  }
+  match self.reversed {
+    false =>
+      if not(is_err) {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to be Err",
+          ).red().to_string()
+        println(msg)
+        println("")
+        print_string(format("Received: ").red().to_string())
+        println(format(debug_string(self.received)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+    true =>
+      if is_err {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected " + debug_string(self.received) + " to not be Err",
+          ).red().to_string()
+        println(msg)
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+  }
+  true
+}
+
 fn abs(a : Double) -> Double {
   if a < 0.0 {
     -a
@@ -200,7 +348,125 @@ pub fn close_to(self : ExpectObj[Double], target : Double, tolerance : Double) -
   true
 }
 
-pub fn expect[T : Eq + Show](t : T) -> ExpectObj[T] {
+pub fn to_have_length[T : HasLength + Debug](self : ExpectObj[T], expected : Int) ->
+     Bool {
+  let length = self.received.length()
+  match self.reversed {
+    false =>
+      if length != expected {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected the length of " + debug_string(self.received) + " to be " +
+            debug_string(expected),
+          ).red().to_string()
+        println(msg)
+        println("")
+        println(format("- Expected: ").yellow())
+        println(format("+ Received: ").red())
+        println("")
+        println(format("- " + debug_string(expected)).yellow())
+        println(format("+ " + debug_string(length)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+    true =>
+      if length == expected {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected the length of " + debug_string(self.received) + " to not be " +
+            debug_string(expected),
+          ).red().to_string()
+        println(msg)
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+  }
+  true
+}
+
+enum CmpSymbol {
+  Greater
+  Less
+  GreaterOrEqual
+  LessOrEqual
+}
+
+fn reverse(self : CmpSymbol) -> CmpSymbol {
+  match self {
+    CmpSymbol::Greater => CmpSymbol::LessOrEqual
+    CmpSymbol::Less => CmpSymbol::GreaterOrEqual
+    CmpSymbol::GreaterOrEqual => CmpSymbol::Less
+    CmpSymbol::LessOrEqual => CmpSymbol::Greater
+  }
+}
+
+fn to_string(self : CmpSymbol) -> String {
+  match self {
+    CmpSymbol::Greater => ">"
+    CmpSymbol::Less => "<"
+    CmpSymbol::GreaterOrEqual => ">="
+    CmpSymbol::LessOrEqual => "<="
+  }
+}
+
+fn assert_cmp(self : CmpSymbol, cmp : Int) -> Bool {
+  match self {
+    CmpSymbol::Greater => cmp > 0
+    CmpSymbol::Less => cmp < 0
+    CmpSymbol::GreaterOrEqual => cmp >= 0
+    CmpSymbol::LessOrEqual => cmp <= 0
+  }
+}
+
+fn expect_cmp[T : Debug + Compare](received : ExpectObj[T], expected : T,
+        expected_symbol : CmpSymbol) -> Bool {
+  let mut expected_symbol = expected_symbol
+  if received.reversed {
+    expected_symbol = expected_symbol.reverse()
+  }
+  let cmp = received.received.compare(expected)
+  let is_correct = expected_symbol.assert_cmp(cmp)
+  if not(is_correct) {
+    let symbol_str = expected_symbol.to_string()
+    let msg = format("AssertionError: ").bold().red().to_string() + format(
+        "expected " + debug_string(received.received) + " to be \(symbol_str) " +
+        debug_string(expected),
+      ).red().to_string()
+    println(msg)
+    println("\n")
+    if testing_by_self.get(0) == true {
+      return false
+    }
+    abort("")
+  }
+  is_correct
+}
+
+pub fn to_be_greater_than[T : Debug + Compare](self : ExpectObj[T], expected : T) ->
+     Bool {
+  expect_cmp(self, expected, CmpSymbol::Greater)
+}
+
+pub fn to_be_less_than[T : Debug + Compare](self : ExpectObj[T], expected : T) ->
+     Bool {
+  expect_cmp(self, expected, CmpSymbol::Less)
+}
+
+pub fn to_be_less_or_equal_to[T : Debug + Compare](self : ExpectObj[T],
+        expected : T) -> Bool {
+  expect_cmp(self, expected, CmpSymbol::LessOrEqual)
+}
+
+pub fn to_be_greater_or_equal_to[T : Debug + Compare](self : ExpectObj[T],
+        expected : T) -> Bool {
+  expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
+}
+
+pub fn expect[T](t : T) -> ExpectObj[T] {
   { received: t, reversed: false }
 }
 
