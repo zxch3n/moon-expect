@@ -91,6 +91,64 @@ pub fn includes[T : Eq + Debug](self : ExpectObj[List[T]], v : T) -> Bool {
   true
 }
 
+fn contains(s : String, sub : String) -> Bool {
+  let mut i = 0
+  let mut j = 0
+  while i < s.length() {
+    if s.get(i) == sub.get(j) {
+      j = j + 1
+      if j == sub.length() {
+        return true
+      }
+    } else {
+      j = 0
+    }
+    i = i + 1
+  }
+  false
+}
+
+pub fn to_match(self : ExpectObj[String], expected : String) -> Bool {
+  let has = contains(self.received, expected)
+  match self.reversed {
+    false =>
+      if has == false {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected the string to include " + debug_string(expected),
+          ).red().to_string()
+        println(msg)
+        println("")
+        print_string(format("Expected Substring: ").yellow().to_string())
+        println(format(debug_string(expected)).yellow())
+        print_string(format("Received          : ").red().to_string())
+        println(format(debug_string(self.received)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+    true =>
+      if has {
+        let msg = format("AssertionError: ").bold().red().to_string() + format(
+            "expected the string to not include " + debug_string(expected),
+          ).red().to_string()
+        println(msg)
+        println("")
+        print_string(format("Expected Substring: ").yellow().to_string())
+        println(format(debug_string(expected)).yellow())
+        print_string(format("Received          : ").red().to_string())
+        println(format(debug_string(self.received)).red())
+        println("\n")
+        if testing_by_self.get(0) == true {
+          return false
+        }
+        abort("")
+      }
+  }
+  true
+}
+
 fn abs(a : Double) -> Double {
   if a < 0.0 {
     -a

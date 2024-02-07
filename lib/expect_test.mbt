@@ -22,6 +22,14 @@ test "includes" {
   ()
 }
 
+test "includes_str" {
+  assert(expect("abcd").to_match("bc"))
+  assert(expect("abcd").not().to_match("bc") == false)
+  assert(expect("12345").to_match("12345"))
+  assert(expect("12345").to_match("123456") == false)
+  ()
+}
+
 test "closeTo" {
   assert(expect(1.0).close_to(1.0, 0.1))
   assert(expect(1.0).not().close_to(1.0, 0.1) == false)
