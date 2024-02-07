@@ -5,6 +5,31 @@ struct ExpectObj[T] {
 
 let testing_by_self : Array[Bool] = [false]
 
+/// `expect` that works like [Jest/Vitest's expect](https://jestjs.io/docs/expect).
+/// 
+/// # Examples
+///
+/// ```mbt
+/// expect(123).to_be_greater_than(5);
+/// expect(123).not().to_be_greater_than(125);
+/// expect(1).to_be_greater_than(2); // This will abort
+/// // AssertionError: expected 1 to be > 4
+/// ```
+pub fn expect[T](t : T) -> ExpectObj[T] {
+  { received: t, reversed: false }
+}
+
+pub fn not[T](self : ExpectObj[T]) -> ExpectObj[T] {
+  {
+    received: self.received,
+    reversed: if self.reversed {
+      false
+    } else {
+      true
+    },
+  }
+}
+
 pub fn equal[T : Eq + Show + Debug](self : ExpectObj[T], expected : T) -> Bool {
   match self.reversed {
     false =>
@@ -464,19 +489,4 @@ pub fn to_be_less_than_or_equal[T : Debug + Compare](self : ExpectObj[T],
 pub fn to_be_greater_than_or_equal[T : Debug + Compare](self : ExpectObj[T],
         expected : T) -> Bool {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
-}
-
-pub fn expect[T](t : T) -> ExpectObj[T] {
-  { received: t, reversed: false }
-}
-
-pub fn not[T](self : ExpectObj[T]) -> ExpectObj[T] {
-  {
-    received: self.received,
-    reversed: if self.reversed {
-      false
-    } else {
-      true
-    },
-  }
 }
