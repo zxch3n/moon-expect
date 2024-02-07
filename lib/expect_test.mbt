@@ -76,9 +76,9 @@ test "cmp" {
   assert(expect(1).to_be_less_than(4))
   assert(expect(1).to_be_less_than(0) == false)
   assert(expect(1).to_be_greater_than(4) == false)
-  assert(expect(1).to_be_greater_or_equal_to(2) == false)
-  assert(expect(1).to_be_greater_or_equal_to(1))
-  assert(expect(1).not().to_be_greater_or_equal_to(1) == false)
+  assert(expect(1).to_be_greater_than_or_equal(2) == false)
+  assert(expect(1).to_be_greater_than_or_equal(1))
+  assert(expect(1).not().to_be_greater_than_or_equal(1) == false)
 }
 
 fn called() -> () -> Int {

@@ -456,12 +456,12 @@ pub fn to_be_less_than[T : Debug + Compare](self : ExpectObj[T], expected : T) -
   expect_cmp(self, expected, CmpSymbol::Less)
 }
 
-pub fn to_be_less_or_equal_to[T : Debug + Compare](self : ExpectObj[T],
+pub fn to_be_less_than_or_equal[T : Debug + Compare](self : ExpectObj[T],
         expected : T) -> Bool {
   expect_cmp(self, expected, CmpSymbol::LessOrEqual)
 }
 
-pub fn to_be_greater_or_equal_to[T : Debug + Compare](self : ExpectObj[T],
+pub fn to_be_greater_than_or_equal[T : Debug + Compare](self : ExpectObj[T],
         expected : T) -> Bool {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
 }
