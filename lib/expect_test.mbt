@@ -2,7 +2,7 @@ fn init {
   testing_by_self.set(0, true)
 }
 
-pub fn assert(v : Bool) {
+pub fn assert(v : Bool) -> Unit {
   if v == false {
     abort("test assertion failed")
   }

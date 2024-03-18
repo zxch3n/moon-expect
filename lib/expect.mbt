@@ -185,7 +185,7 @@ pub fn to_be_none[T : Debug](self : Expect[Option[T]]) -> Bool {
   }
   match self.reversed {
     false =>
-      if not(is_none) {
+      if is_none == false {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
             "expected " + debug_string(self.received) + " to be None",
           ).red().to_string()
@@ -222,7 +222,7 @@ pub fn to_be_some[T : Debug](self : Expect[Option[T]]) -> Bool {
   }
   match self.reversed {
     false =>
-      if not(is_some) {
+      if is_some == false {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
             "expected " + debug_string(self.received) + " to be Some",
           ).red().to_string()
@@ -259,7 +259,7 @@ pub fn to_be_ok[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   }
   match self.reversed {
     false =>
-      if not(is_ok) {
+      if is_ok == false {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
             "expected " + debug_string(self.received) + " to be Ok",
           ).red().to_string()
@@ -296,7 +296,7 @@ pub fn to_be_err[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   }
   match self.reversed {
     false =>
-      if not(is_err) {
+      if is_err == false {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
             "expected " + debug_string(self.received) + " to be Err",
           ).red().to_string()
@@ -334,14 +334,17 @@ fn abs(a : Double) -> Double {
   }
 }
 
-pub fn close_to(self : Expect[Double], target : Double, tolerance : Double) ->
-     Bool {
+pub fn close_to(
+  self : Expect[Double],
+  target : Double,
+  tolerance : Double
+) -> Bool {
   let diff = abs(self.received - target)
   let tolerance = abs(tolerance)
   let result = diff < tolerance
   match self.reversed {
     false =>
-      if not(result) {
+      if result == false {
         let msg = format("AssertionError: ").bold().red().to_string() + format(
             "expected " + debug_string(self.received) + " to be close to " + debug_string(
               target,
@@ -377,8 +380,10 @@ pub fn close_to(self : Expect[Double], target : Double, tolerance : Double) ->
   true
 }
 
-pub fn to_have_length[T : HasLength + Debug](self : Expect[T], expected : Int) ->
-     Bool {
+pub fn to_have_length[T : HasLength + Debug](
+  self : Expect[T],
+  expected : Int
+) -> Bool {
   let length = self.received.length()
   match self.reversed {
     false =>
@@ -451,15 +456,18 @@ fn assert_cmp(self : CmpSymbol, cmp : Int) -> Bool {
   }
 }
 
-fn expect_cmp[T : Debug + Compare](received : Expect[T], expected : T,
-        expected_symbol : CmpSymbol) -> Bool {
+fn expect_cmp[T : Debug + Compare](
+  received : Expect[T],
+  expected : T,
+  expected_symbol : CmpSymbol
+) -> Bool {
   let mut expected_symbol = expected_symbol
   if received.reversed {
     expected_symbol = expected_symbol.reverse()
   }
   let cmp = received.received.compare(expected)
   let is_correct = expected_symbol.assert_cmp(cmp)
-  if not(is_correct) {
+  if is_correct == false {
     let symbol_str = expected_symbol.to_string()
     let msg = format("AssertionError: ").bold().red().to_string() + format(
         "expected " + debug_string(received.received) + " to be \(symbol_str) " +
@@ -475,22 +483,30 @@ fn expect_cmp[T : Debug + Compare](received : Expect[T], expected : T,
   is_correct
 }
 
-pub fn to_be_greater_than[T : Debug + Compare](self : Expect[T], expected : T) ->
-     Bool {
+pub fn to_be_greater_than[T : Debug + Compare](
+  self : Expect[T],
+  expected : T
+) -> Bool {
   expect_cmp(self, expected, CmpSymbol::Greater)
 }
 
-pub fn to_be_less_than[T : Debug + Compare](self : Expect[T], expected : T) ->
-     Bool {
+pub fn to_be_less_than[T : Debug + Compare](
+  self : Expect[T],
+  expected : T
+) -> Bool {
   expect_cmp(self, expected, CmpSymbol::Less)
 }
 
-pub fn to_be_less_than_or_equal[T : Debug + Compare](self : Expect[T],
-        expected : T) -> Bool {
+pub fn to_be_less_than_or_equal[T : Debug + Compare](
+  self : Expect[T],
+  expected : T
+) -> Bool {
   expect_cmp(self, expected, CmpSymbol::LessOrEqual)
 }
 
-pub fn to_be_greater_than_or_equal[T : Debug + Compare](self : Expect[T],
-        expected : T) -> Bool {
+pub fn to_be_greater_than_or_equal[T : Debug + Compare](
+  self : Expect[T],
+  expected : T
+) -> Bool {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
 }

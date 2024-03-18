@@ -73,7 +73,7 @@ fn to_string(self : Formated) -> String {
           }
           continue rest
         }
-        List::Nil => ans
+        List::Nil => ()
       }
       ans + "m" + self.str + "[0m"
     }
