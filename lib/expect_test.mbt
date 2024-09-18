@@ -9,6 +9,7 @@ pub fn assert(v : Bool) -> Unit {
 }
 
 test "equal" {
+  assert(@lib.expect(1).equal(1) == true)
   assert(@lib.expect("hello").equal("hello") == true)
   assert(@lib.expect("hello").not().equal("hello") == false)
   assert(@lib.expect("hello").equal("hello1") == false)
