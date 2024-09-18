@@ -3,7 +3,7 @@ struct Expect[T] {
   reversed : Bool
 }
 
-let testing_by_self : Array[Bool] = [false]
+pub let testing_by_self : Array[Bool] = [false]
 
 /// `expect` that works like [Jest/Vitest's expect](https://jestjs.io/docs/expect).
 /// 
@@ -30,20 +30,24 @@ pub fn not[T](self : Expect[T]) -> Expect[T] {
   }
 }
 
-pub fn to_be[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
+pub fn to_be[T : Eq + Show](self : Expect[T], expected : T) -> Bool {
   equal(self, expected)
 }
 
-pub fn equal[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
+pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Bool {
   match self.reversed {
     false =>
       if self.received != expected {
         let received = self.received
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(received) + " to equal " + debug_string(
-              expected,
-            ),
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format(
+            "expected " +
+            debug_string(received) +
+            " to equal " +
+            debug_string(expected),
+          )
+          .red()
+          .to_string()
         println(msg)
         println("")
         println(format("- Expected: ").yellow())
@@ -52,7 +56,7 @@ pub fn equal[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
         println(format("- " + debug_string(expected)).yellow())
         println(format("+ " + debug_string(received)).red())
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self.get(0).unwrap() == true {
           return false
         }
         abort("")
@@ -60,14 +64,18 @@ pub fn equal[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
     true =>
       if self.received == expected {
         let received = self.received
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(received) + " to not equal " + debug_string(
-              expected,
-            ),
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format(
+            "expected " +
+            debug_string(received) +
+            " to not equal " +
+            debug_string(expected),
+          )
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self.get(0).unwrap() == true {
           return false
         }
         abort("")
@@ -76,42 +84,46 @@ pub fn equal[T : Eq + Debug](self : Expect[T], expected : T) -> Bool {
   true
 }
 
-pub fn includes[T : Eq + Debug](self : Expect[List[T]], v : T) -> Bool {
-  fn has(arr : List[T], v : T) -> Bool {
-    match arr {
-      Nil => false
-      Cons(h, t) => if h == v { true } else { has(t, v) }
+pub fn includes[T : Eq + Show](self : Expect[Iter[T]], v : T) -> Bool {
+  fn has(arr : Iter[T], v : T) -> Bool {
+    for a in arr {
+      if a == v {
+        return true
+      }
     }
+    false
   }
 
   let has = has(self.received, v)
   match self.reversed {
     false =>
       if has == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected the list to include " + debug_string(v),
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected the list to include " + debug_string(v))
+          .red()
+          .to_string()
         println(msg)
         println("")
         println(format("Received: ").red())
         println(format(debug_string(self.received)).red())
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self.get(0).unwrap() == true {
           return false
         }
         abort("")
       }
     true =>
       if has {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected the list to not include " + debug_string(v),
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected the list to not include " + debug_string(v))
+          .red()
+          .to_string()
         println(msg)
         println("")
         println(format("Received: ").red())
         println(format(debug_string(self.received)).red())
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self.get(0).unwrap() == true {
           return false
         }
         abort("")
@@ -139,46 +151,58 @@ fn contains(s : String, sub : String) -> Bool {
 
 pub fn to_match(self : Expect[String], expected : String) -> Bool {
   let has = contains(self.received, expected)
+  let buffer = Buffer::new()
   match self.reversed {
     false =>
       if has == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected the string to include " + debug_string(expected),
-          ).red().to_string()
-        println(msg)
-        println("")
-        print_string(format("Expected Substring: ").yellow().to_string())
-        println(format(debug_string(expected)).yellow())
-        print_string(format("Received          : ").red().to_string())
-        println(format(debug_string(self.received)).red())
-        println("\n")
-        if testing_by_self.get(0) == true {
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected the string to include " + debug_string(expected))
+          .red()
+          .to_string()
+        buffer.write_string(msg)
+        buffer.write_string(msg)
+        buffer.write_string("\n")
+        buffer.write_string(format("Expected Substring: ").yellow().to_string())
+        buffer.write_string(format(debug_string(expected)).yellow().to_string())
+        buffer.write_string("\n")
+        buffer.write_string(format("Received          : ").red().to_string())
+        buffer.write_string(
+          format(debug_string(self.received)).red().to_string(),
+        )
+        buffer.write_string("\n\n")
+        if testing_by_self[0] == true {
           return false
         }
-        abort("")
+        println(buffer.to_string())
+        abort(buffer.to_string())
       }
     true =>
       if has {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected the string to not include " + debug_string(expected),
-          ).red().to_string()
-        println(msg)
-        println("")
-        print_string(format("Expected Substring: ").yellow().to_string())
-        println(format(debug_string(expected)).yellow())
-        print_string(format("Received          : ").red().to_string())
-        println(format(debug_string(self.received)).red())
-        println("\n")
-        if testing_by_self.get(0) == true {
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected the string to not include " + debug_string(expected))
+          .red()
+          .to_string()
+        buffer.write_string(msg)
+        buffer.write_string("\n")
+        buffer.write_string(format("Expected Substring: ").yellow().to_string())
+        buffer.write_string(format(debug_string(expected)).yellow().to_string())
+        buffer.write_string("\n")
+        buffer.write_string(format("Received          : ").red().to_string())
+        buffer.write_string(
+          format(debug_string(self.received)).red().to_string(),
+        )
+        buffer.write_string("\n\n")
+        if testing_by_self[0] == true {
           return false
         }
-        abort("")
+        println(buffer.to_string())
+        abort(buffer.to_string())
       }
   }
   true
 }
 
-pub fn to_be_none[T : Debug](self : Expect[Option[T]]) -> Bool {
+pub fn to_be_none[T : Show](self : Expect[T?]) -> Bool {
   let is_none = match self.received {
     None => true
     Some(_) => false
@@ -186,27 +210,31 @@ pub fn to_be_none[T : Debug](self : Expect[Option[T]]) -> Bool {
   match self.reversed {
     false =>
       if is_none == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to be None",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " to be None")
+          .red()
+          .to_string()
         println(msg)
         println("")
-        print_string(format("Received: ").red().to_string())
-        println(format(debug_string(self.received)).red())
+        println(
+          format("Received: ").red().to_string() +
+          format(debug_string(self.received)).red().to_string(),
+        )
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
       }
     true =>
       if is_none {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to not be None",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " not to be None")
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
@@ -215,7 +243,7 @@ pub fn to_be_none[T : Debug](self : Expect[Option[T]]) -> Bool {
   true
 }
 
-pub fn to_be_some[T : Debug](self : Expect[Option[T]]) -> Bool {
+pub fn to_be_some[T : Show](self : Expect[T?]) -> Bool {
   let is_some = match self.received {
     Some(_) => true
     None => false
@@ -223,27 +251,31 @@ pub fn to_be_some[T : Debug](self : Expect[Option[T]]) -> Bool {
   match self.reversed {
     false =>
       if is_some == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to be Some",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " to be Some")
+          .red()
+          .to_string()
         println(msg)
         println("")
-        print_string(format("Received: ").red().to_string())
-        println(format(debug_string(self.received)).red())
+        println(
+          format("Received: ").red().to_string() +
+          format(debug_string(self.received)).red().to_string(),
+        )
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
       }
     true =>
       if is_some {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to not be Some",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " not to be Some")
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
@@ -252,7 +284,7 @@ pub fn to_be_some[T : Debug](self : Expect[Option[T]]) -> Bool {
   true
 }
 
-pub fn to_be_ok[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
+pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
   let is_ok = match self.received {
     Ok(_) => true
     Err(_) => false
@@ -260,27 +292,31 @@ pub fn to_be_ok[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   match self.reversed {
     false =>
       if is_ok == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to be Ok",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " to be Ok")
+          .red()
+          .to_string()
         println(msg)
         println("")
-        print_string(format("Received: ").red().to_string())
-        println(format(debug_string(self.received)).red())
+        println(
+          format("Received: ").red().to_string() +
+          format(debug_string(self.received)).red().to_string(),
+        )
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
       }
     true =>
       if is_ok {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to not be Ok",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " not to be Ok")
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
@@ -289,7 +325,7 @@ pub fn to_be_ok[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   true
 }
 
-pub fn to_be_err[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
+pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
   let is_err = match self.received {
     Err(_) => true
     Ok(_) => false
@@ -297,27 +333,31 @@ pub fn to_be_err[T : Debug, D : Debug](self : Expect[Result[T, D]]) -> Bool {
   match self.reversed {
     false =>
       if is_err == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to be Err",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " to be Err")
+          .red()
+          .to_string()
         println(msg)
         println("")
-        print_string(format("Received: ").red().to_string())
-        println(format(debug_string(self.received)).red())
+        println(
+          format("Received: ").red().to_string() +
+          format(debug_string(self.received)).red().to_string(),
+        )
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
       }
     true =>
       if is_err {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to not be Err",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format("expected " + debug_string(self.received) + " not to be Err")
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
@@ -345,11 +385,16 @@ pub fn close_to(
   match self.reversed {
     false =>
       if result == false {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to be close to " + debug_string(
-              target,
-            ) + " (±\(tolerance))",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format(
+            "expected " +
+            debug_string(self.received) +
+            " to be close to " +
+            debug_string(target) +
+            " (±\{tolerance})",
+          )
+          .red()
+          .to_string()
         println(msg)
         println("")
         println(format("- Expected: ").yellow())
@@ -358,20 +403,26 @@ pub fn close_to(
         println(format("- " + debug_string(target)).yellow())
         println(format("+ " + debug_string(self.received)).red())
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
       }
     true =>
       if result {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected " + debug_string(self.received) + " to not be close to " +
-            debug_string(target) + " (±\(tolerance))",
-          ).red().to_string()
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format(
+            "expected " +
+            debug_string(self.received) +
+            " not to be close to " +
+            debug_string(target) +
+            " (±\{tolerance})",
+          )
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
@@ -380,7 +431,7 @@ pub fn close_to(
   true
 }
 
-pub fn to_have_length[T : HasLength + Debug](
+pub fn to_have_length[T : HasLength + Show](
   self : Expect[T],
   expected : Int
 ) -> Bool {
@@ -388,10 +439,15 @@ pub fn to_have_length[T : HasLength + Debug](
   match self.reversed {
     false =>
       if length != expected {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected the length of " + debug_string(self.received) + " to be " +
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format(
+            "expected the length of " +
+            debug_string(self.received) +
+            " to be " +
             debug_string(expected),
-          ).red().to_string()
+          )
+          .red()
+          .to_string()
         println(msg)
         println("")
         println(format("- Expected: ").yellow())
@@ -400,20 +456,25 @@ pub fn to_have_length[T : HasLength + Debug](
         println(format("- " + debug_string(expected)).yellow())
         println(format("+ " + debug_string(length)).red())
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
       }
     true =>
       if length == expected {
-        let msg = format("AssertionError: ").bold().red().to_string() + format(
-            "expected the length of " + debug_string(self.received) + " to not be " +
+        let msg = format("AssertionError: ").bold().red().to_string() +
+          format(
+            "expected the length of " +
+            debug_string(self.received) +
+            " not to be " +
             debug_string(expected),
-          ).red().to_string()
+          )
+          .red()
+          .to_string()
         println(msg)
         println("\n")
-        if testing_by_self.get(0) == true {
+        if testing_by_self[0] {
           return false
         }
         abort("")
@@ -456,7 +517,7 @@ fn assert_cmp(self : CmpSymbol, cmp : Int) -> Bool {
   }
 }
 
-fn expect_cmp[T : Debug + Compare](
+fn expect_cmp[T : Show + Compare](
   received : Expect[T],
   expected : T,
   expected_symbol : CmpSymbol
@@ -469,13 +530,18 @@ fn expect_cmp[T : Debug + Compare](
   let is_correct = expected_symbol.assert_cmp(cmp)
   if is_correct == false {
     let symbol_str = expected_symbol.to_string()
-    let msg = format("AssertionError: ").bold().red().to_string() + format(
-        "expected " + debug_string(received.received) + " to be \(symbol_str) " +
+    let msg = format("AssertionError: ").bold().red().to_string() +
+      format(
+        "expected " +
+        debug_string(received.received) +
+        " to be \{symbol_str} " +
         debug_string(expected),
-      ).red().to_string()
+      )
+      .red()
+      .to_string()
     println(msg)
     println("\n")
-    if testing_by_self.get(0) == true {
+    if testing_by_self[0] == true {
       return false
     }
     abort("")
@@ -483,28 +549,28 @@ fn expect_cmp[T : Debug + Compare](
   is_correct
 }
 
-pub fn to_be_greater_than[T : Debug + Compare](
+pub fn to_be_greater_than[T : Show + Compare](
   self : Expect[T],
   expected : T
 ) -> Bool {
   expect_cmp(self, expected, CmpSymbol::Greater)
 }
 
-pub fn to_be_less_than[T : Debug + Compare](
+pub fn to_be_less_than[T : Show + Compare](
   self : Expect[T],
   expected : T
 ) -> Bool {
   expect_cmp(self, expected, CmpSymbol::Less)
 }
 
-pub fn to_be_less_than_or_equal[T : Debug + Compare](
+pub fn to_be_less_than_or_equal[T : Show + Compare](
   self : Expect[T],
   expected : T
 ) -> Bool {
   expect_cmp(self, expected, CmpSymbol::LessOrEqual)
 }
 
-pub fn to_be_greater_than_or_equal[T : Debug + Compare](
+pub fn to_be_greater_than_or_equal[T : Show + Compare](
   self : Expect[T],
   expected : T
 ) -> Bool {

@@ -1,8 +1,10 @@
+typealias List[A] = @immut/list.T[A]
+
 priv struct Formated {
   str : String
-  bg_color : Option[Color]
-  color : Option[Color]
-  formats : List[Format]
+  bg_color : Color?
+  color : Color?
+  formats : @immut/list.T[Format]
 }
 
 priv enum Format {
@@ -27,10 +29,12 @@ priv enum Color {
   Default
 }
 
-fn debug_string[T : Debug](value : T) -> String {
-  let buffer = Buffer::make(10)
-  value.debug_write(buffer)
-  buffer.to_string()
+fn debug_string[T : Show](value : T) -> String {
+  value.to_string()
+}
+
+fn output(self : Formated, logger : Logger) -> Unit {
+  logger.write_string(self.to_string())
 }
 
 fn to_string(self : Formated) -> String {
