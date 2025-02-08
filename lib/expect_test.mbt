@@ -1,7 +1,9 @@
+///|
 fn init {
   @lib.testing_by_self[0] = true
 }
 
+///|
 pub fn assert(v : Bool) -> Unit {
   if v == false {
     abort("test assertion failed")
@@ -82,6 +84,22 @@ test "cmp" {
   assert(@lib.expect(1).not().to_be_greater_than_or_equal(1) == false)
 }
 
+test "todo" {
+  @lib.todo(to_abort=false)
+  @lib.todo(reason="reason", to_abort=false)
+}
+
+test "not_implemented" {
+  @lib.not_implemented(to_abort=false)
+  @lib.not_implemented(reason="reason", to_abort=false)
+}
+
+test "panic" {
+  @lib.panic(to_abort=false)
+  @lib.panic(reason="reason", to_abort=false)
+}
+
+///|
 fn called() -> () -> Int {
   let mut i = 0
   fn f() -> Int {

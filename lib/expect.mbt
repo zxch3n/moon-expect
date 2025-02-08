@@ -672,3 +672,51 @@ pub fn to_be_greater_than_or_equal[T : Show + Compare](
 ) -> Bool {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
 }
+
+///|
+pub fn todo(
+  reason~ : String = "",
+  loc~ : SourceLoc = _,
+  to_abort~ : Bool = true
+) -> Unit {
+  let msg = Formated::format("TODO: ").bold().red().to_string() +
+    Formated::format(reason).yellow().to_string() +
+    " at " +
+    Formated::format(loc.to_string()).blue().to_string()
+  println(msg)
+  if to_abort {
+    abort(msg)
+  }
+}
+
+///|
+pub fn not_implemented(
+  reason~ : String = "",
+  loc~ : SourceLoc = _,
+  to_abort~ : Bool = true
+) -> Unit {
+  let msg = Formated::format("Not implemented: ").bold().red().to_string() +
+    Formated::format(reason).yellow().to_string() +
+    " at " +
+    Formated::format(loc.to_string()).blue().to_string()
+  println(msg)
+  if to_abort {
+    abort(msg)
+  }
+}
+
+///|
+pub fn panic(
+  reason~ : String = "",
+  loc~ : SourceLoc = _,
+  to_abort~ : Bool = true
+) -> Unit {
+  let msg = Formated::format("Panic: ").bold().red().to_string() +
+    Formated::format(reason).yellow().to_string() +
+    " at " +
+    Formated::format(loc.to_string()).blue().to_string()
+  println(msg)
+  if to_abort {
+    abort(msg)
+  }
+}
