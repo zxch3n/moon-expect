@@ -1,5 +1,7 @@
+///|
 typealias List[A] = @immut/list.T[A]
 
+///|
 priv struct Formated {
   str : String
   bg_color : Color?
@@ -7,6 +9,7 @@ priv struct Formated {
   formats : @immut/list.T[Format]
 }
 
+///|
 priv enum Format {
   Bold
   Underline
@@ -17,6 +20,7 @@ priv enum Format {
   Italic
 }
 
+///|
 priv enum Color {
   Black
   Red
@@ -29,15 +33,18 @@ priv enum Color {
   Default
 }
 
+///|
 fn debug_string[T : Show](value : T) -> String {
   value.to_string()
 }
 
-fn output(self : Formated, logger : Logger) -> Unit {
+///|
+fn output(self : Formated, logger : &Logger) -> Unit {
   logger.write_string(self.to_string())
 }
 
-fn to_string(self : Formated) -> String {
+///|
+fn Formated::to_string(self : Formated) -> String {
   let mut styles = List::Nil
   match self.color {
     Some(color) => styles = List::Cons(to_color_code(color), styles)
@@ -85,6 +92,7 @@ fn to_string(self : Formated) -> String {
   }
 }
 
+///|
 fn to_color_code(self : Color) -> String {
   match self {
     Black => "30"
@@ -99,6 +107,7 @@ fn to_color_code(self : Color) -> String {
   }
 }
 
+///|
 fn to_bg_color_code(self : Color) -> String {
   match self {
     Black => "40"
@@ -113,10 +122,12 @@ fn to_bg_color_code(self : Color) -> String {
   }
 }
 
+///|
 fn Formated::format(str : String) -> Formated {
   { str, bg_color: None, color: None, formats: List::Nil }
 }
 
+///|
 fn red(self : Formated) -> Formated {
   {
     str: self.str,
@@ -126,6 +137,7 @@ fn red(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_red(self : Formated) -> Formated {
   {
     str: self.str,
@@ -135,6 +147,7 @@ fn bg_red(self : Formated) -> Formated {
   }
 }
 
+///|
 fn yellow(self : Formated) -> Formated {
   {
     str: self.str,
@@ -144,6 +157,7 @@ fn yellow(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_yellow(self : Formated) -> Formated {
   {
     str: self.str,
@@ -153,6 +167,7 @@ fn bg_yellow(self : Formated) -> Formated {
   }
 }
 
+///|
 fn green(self : Formated) -> Formated {
   {
     str: self.str,
@@ -162,6 +177,7 @@ fn green(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_green(self : Formated) -> Formated {
   {
     str: self.str,
@@ -171,6 +187,7 @@ fn bg_green(self : Formated) -> Formated {
   }
 }
 
+///|
 fn blue(self : Formated) -> Formated {
   {
     str: self.str,
@@ -180,6 +197,7 @@ fn blue(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_blue(self : Formated) -> Formated {
   {
     str: self.str,
@@ -189,6 +207,7 @@ fn bg_blue(self : Formated) -> Formated {
   }
 }
 
+///|
 fn magenta(self : Formated) -> Formated {
   {
     str: self.str,
@@ -198,6 +217,7 @@ fn magenta(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_magenta(self : Formated) -> Formated {
   {
     str: self.str,
@@ -207,6 +227,7 @@ fn bg_magenta(self : Formated) -> Formated {
   }
 }
 
+///|
 fn cyan(self : Formated) -> Formated {
   {
     str: self.str,
@@ -216,6 +237,7 @@ fn cyan(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_cyan(self : Formated) -> Formated {
   {
     str: self.str,
@@ -225,6 +247,7 @@ fn bg_cyan(self : Formated) -> Formated {
   }
 }
 
+///|
 fn white(self : Formated) -> Formated {
   {
     str: self.str,
@@ -234,6 +257,7 @@ fn white(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_white(self : Formated) -> Formated {
   {
     str: self.str,
@@ -243,6 +267,7 @@ fn bg_white(self : Formated) -> Formated {
   }
 }
 
+///|
 fn black(self : Formated) -> Formated {
   {
     str: self.str,
@@ -252,6 +277,7 @@ fn black(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bg_black(self : Formated) -> Formated {
   {
     str: self.str,
@@ -261,6 +287,7 @@ fn bg_black(self : Formated) -> Formated {
   }
 }
 
+///|
 fn default_color(self : Formated) -> Formated {
   {
     str: self.str,
@@ -270,6 +297,7 @@ fn default_color(self : Formated) -> Formated {
   }
 }
 
+///|
 fn default_bg_color(self : Formated) -> Formated {
   {
     str: self.str,
@@ -279,6 +307,7 @@ fn default_bg_color(self : Formated) -> Formated {
   }
 }
 
+///|
 fn bold(self : Formated) -> Formated {
   {
     str: self.str,
@@ -288,6 +317,7 @@ fn bold(self : Formated) -> Formated {
   }
 }
 
+///|
 fn underline(self : Formated) -> Formated {
   {
     str: self.str,
@@ -297,6 +327,7 @@ fn underline(self : Formated) -> Formated {
   }
 }
 
+///|
 fn blink(self : Formated) -> Formated {
   {
     str: self.str,
@@ -306,6 +337,7 @@ fn blink(self : Formated) -> Formated {
   }
 }
 
+///|
 fn inverse(self : Formated) -> Formated {
   {
     str: self.str,
@@ -315,6 +347,7 @@ fn inverse(self : Formated) -> Formated {
   }
 }
 
+///|
 fn hidden(self : Formated) -> Formated {
   {
     str: self.str,
@@ -324,6 +357,7 @@ fn hidden(self : Formated) -> Formated {
   }
 }
 
+///|
 fn strikethrough(self : Formated) -> Formated {
   {
     str: self.str,
@@ -333,6 +367,7 @@ fn strikethrough(self : Formated) -> Formated {
   }
 }
 
+///|
 fn italic(self : Formated) -> Formated {
   {
     str: self.str,
