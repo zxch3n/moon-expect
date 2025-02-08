@@ -84,19 +84,16 @@ test "cmp" {
   assert(@expect.expect(1).not().to_be_greater_than_or_equal(1) == false)
 }
 
-test "todo" {
-  @expect.todo(to_abort=false)
-  @expect.todo(reason="reason", to_abort=false)
+test "panic todo" {
+  @expect.todo(reason="reason")
 }
 
-test "not_implemented" {
-  @expect.not_implemented(to_abort=false)
-  @expect.not_implemented(reason="reason", to_abort=false)
+test "panic not_implemented" {
+  @expect.not_implemented(reason="reason")
 }
 
-test "panic" {
-  @expect.panic(to_abort=false)
-  @expect.panic(reason="reason", to_abort=false)
+test "panic_test" {
+  @expect.panic(reason="reason")
 }
 
 ///|
