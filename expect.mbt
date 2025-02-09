@@ -5,9 +5,6 @@ struct Expect[T] {
   loc : SourceLoc
 }
 
-///|
-pub let testing_by_self : Array[Bool] = [false]
-
 ///| `expect` that works like [Jest/Vitest's expect](https://jestjs.io/docs/expect).
 /// 
 /// # Examples
@@ -36,7 +33,7 @@ pub fn not[T](self : Expect[T]) -> Expect[T] {
 }
 
 ///|
-pub fn to_be[T : Eq + Show](self : Expect[T], expected : T) -> Bool {
+pub fn to_be[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
   equal(self, expected)
 }
 
@@ -52,7 +49,7 @@ fn print_loc[T](self : Expect[T]) -> Unit {
 }
 
 ///|
-pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Bool {
+pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
   match self.reversed {
     false =>
       if self.received != expected {
@@ -71,9 +68,6 @@ pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Bool {
         println(Formated::format("- " + debug_string(expected)).yellow())
         println(Formated::format("+ " + debug_string(received)).green())
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -93,17 +87,13 @@ pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Bool {
           " " + Formated::format(debug_string(received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
-pub fn includes[T : Eq + Show](self : Expect[Iter[T]], v : T) -> Bool {
+pub fn includes[T : Eq + Show](self : Expect[Iter[T]], v : T) -> Unit {
   fn has(arr : Iter[T], v : T) -> Bool {
     for a in arr {
       if a == v {
@@ -133,9 +123,6 @@ pub fn includes[T : Eq + Show](self : Expect[Iter[T]], v : T) -> Bool {
         )
         println(Formated::format("+ " + debug_string(self.received)).green())
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -155,13 +142,9 @@ pub fn includes[T : Eq + Show](self : Expect[Iter[T]], v : T) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
@@ -183,7 +166,7 @@ fn contains(s : String, sub : String) -> Bool {
 }
 
 ///|
-pub fn to_match(self : Expect[String], expected : String) -> Bool {
+pub fn to_match(self : Expect[String], expected : String) -> Unit {
   let has = contains(self.received, expected)
   match self.reversed {
     false =>
@@ -204,9 +187,6 @@ pub fn to_match(self : Expect[String], expected : String) -> Bool {
         )
         println(Formated::format("+ " + debug_string(self.received)).green())
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -226,17 +206,13 @@ pub fn to_match(self : Expect[String], expected : String) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
-pub fn to_be_none[T : Show](self : Expect[T?]) -> Bool {
+pub fn to_be_none[T : Show](self : Expect[T?]) -> Unit {
   let is_none = match self.received {
     None => true
     Some(_) => false
@@ -258,9 +234,6 @@ pub fn to_be_none[T : Show](self : Expect[T?]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -279,17 +252,13 @@ pub fn to_be_none[T : Show](self : Expect[T?]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
-pub fn to_be_some[T : Show](self : Expect[T?]) -> Bool {
+pub fn to_be_some[T : Show](self : Expect[T?]) -> Unit {
   let is_some = match self.received {
     Some(_) => true
     None => false
@@ -311,9 +280,6 @@ pub fn to_be_some[T : Show](self : Expect[T?]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -332,17 +298,13 @@ pub fn to_be_some[T : Show](self : Expect[T?]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
-pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
+pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
   let is_ok = match self.received {
     Ok(_) => true
     Err(_) => false
@@ -365,9 +327,6 @@ pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
           .to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -386,17 +345,13 @@ pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
-pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
+pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
   let is_err = match self.received {
     Err(_) => true
     Ok(_) => false
@@ -418,9 +373,6 @@ pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -439,13 +391,9 @@ pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Bool {
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
@@ -461,8 +409,8 @@ fn abs(a : Double) -> Double {
 pub fn close_to(
   self : Expect[Double],
   target : Double,
-  tolerance : Double
-) -> Bool {
+  tolerance~ : Double = 0.000001
+) -> Unit {
   let diff = abs(self.received - target)
   let tolerance = abs(tolerance)
   let result = diff < tolerance
@@ -486,9 +434,6 @@ pub fn close_to(
         println(Formated::format("- " + debug_string(target)).yellow())
         println(Formated::format("+ " + debug_string(self.received)).green())
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -511,20 +456,16 @@ pub fn close_to(
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
 pub fn to_have_length[T : HasLength + Show](
   self : Expect[T],
   expected : Int
-) -> Bool {
+) -> Unit {
   let length = self.received.length()
   match self.reversed {
     false =>
@@ -543,9 +484,6 @@ pub fn to_have_length[T : HasLength + Show](
         println(Formated::format("- " + debug_string(expected)).yellow())
         println(Formated::format("+ " + debug_string(length)).green())
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
     true =>
@@ -565,13 +503,9 @@ pub fn to_have_length[T : HasLength + Show](
           Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
-        if testing_by_self.get(0).unwrap() == true {
-          return false
-        }
         abort("")
       }
   }
-  true
 }
 
 ///|
@@ -617,7 +551,7 @@ fn expect_cmp[T : Show + Compare](
   received : Expect[T],
   expected : T,
   expected_symbol : CmpSymbol
-) -> Bool {
+) -> Unit {
   let mut expected_symbol = expected_symbol
   if received.reversed {
     expected_symbol = expected_symbol.reverse()
@@ -633,19 +567,15 @@ fn expect_cmp[T : Show + Compare](
       Formated::format(debug_string(expected)).yellow().to_string()
     println(msg)
     print_loc(received)
-    if testing_by_self.get(0).unwrap() == true {
-      return false
-    }
     abort("")
   }
-  is_correct
 }
 
 ///|
 pub fn to_be_greater_than[T : Show + Compare](
   self : Expect[T],
   expected : T
-) -> Bool {
+) -> Unit {
   expect_cmp(self, expected, CmpSymbol::Greater)
 }
 
@@ -653,7 +583,7 @@ pub fn to_be_greater_than[T : Show + Compare](
 pub fn to_be_less_than[T : Show + Compare](
   self : Expect[T],
   expected : T
-) -> Bool {
+) -> Unit {
   expect_cmp(self, expected, CmpSymbol::Less)
 }
 
@@ -661,7 +591,7 @@ pub fn to_be_less_than[T : Show + Compare](
 pub fn to_be_less_than_or_equal[T : Show + Compare](
   self : Expect[T],
   expected : T
-) -> Bool {
+) -> Unit {
   expect_cmp(self, expected, CmpSymbol::LessOrEqual)
 }
 
@@ -669,7 +599,7 @@ pub fn to_be_less_than_or_equal[T : Show + Compare](
 pub fn to_be_greater_than_or_equal[T : Show + Compare](
   self : Expect[T],
   expected : T
-) -> Bool {
+) -> Unit {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
 }
 
