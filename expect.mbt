@@ -3,6 +3,7 @@ struct Expect[T] {
   received : T
   reversed : Bool
   loc : SourceLoc
+  message : String
 }
 
 ///| `expect` that works like [Jest/Vitest's expect](https://jestjs.io/docs/expect).
@@ -15,8 +16,12 @@ struct Expect[T] {
 /// expect(1).to_be_greater_than(2); // This will abort
 /// // AssertionError: expected 1 to be > 4
 /// ```
-pub fn expect[T](t : T, loc~ : SourceLoc = _) -> Expect[T] {
-  { received: t, reversed: false, loc }
+pub fn expect[T](
+  t : T,
+  loc~ : SourceLoc = _,
+  message~ : String = ""
+) -> Expect[T] {
+  { received: t, reversed: false, loc, message }
 }
 
 ///|
@@ -29,12 +34,42 @@ pub fn not[T](self : Expect[T]) -> Expect[T] {
       true
     },
     loc: self.loc,
+    message: self.message,
   }
 }
 
 ///|
 pub fn to_be[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
   equal(self, expected)
+}
+
+///|
+pub fn to_be_truthy(self : Expect[Bool]) -> Unit {
+  match self.reversed {
+    true =>
+      if self.received == true {
+        let msg = Formated::format("AssertionError: ").bold().red().to_string() +
+          Formated::format("expected ").red().to_string() +
+          Formated::format(debug_string(self.received)).green().to_string() +
+          Formated::format(" to be falsy").red().to_string()
+        println(msg)
+        print_loc(self)
+      }
+    false =>
+      if self.received == false {
+        let msg = Formated::format("AssertionError: ").bold().red().to_string() +
+          Formated::format("expected ").red().to_string() +
+          Formated::format(debug_string(self.received)).green().to_string() +
+          Formated::format(" to be truthy").red().to_string()
+        println(msg)
+        print_loc(self)
+      }
+  }
+}
+
+///|
+pub fn to_be_falsy(self : Expect[Bool]) -> Unit {
+  self.not().to_be_truthy()
 }
 
 ///|
@@ -45,7 +80,12 @@ fn print_loc[T](self : Expect[T]) -> Unit {
     )
     .blue()
     .to_string()
-  println("\{s}")
+  if self.message.length() > 0 {
+    let m = "Message"
+    let m = Formated::format(m).bold().red().to_string()
+    println("\{m}: \{Formated::format(self.message).red().to_string()}")
+  }
+  println(s)
 }
 
 ///|
@@ -85,61 +125,6 @@ pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
         println("")
         println(
           " " + Formated::format(debug_string(received)).green().to_string(),
-        )
-        println("")
-        abort("")
-      }
-  }
-}
-
-///|
-pub fn includes[T : Eq + Show](self : Expect[Iter[T]], v : T) -> Unit {
-  fn has(arr : Iter[T], v : T) -> Bool {
-    for a in arr {
-      if a == v {
-        return true
-      }
-    }
-    false
-  }
-
-  let has = has(self.received, v)
-  match self.reversed {
-    false =>
-      if has == false {
-        let msg = Formated::format("AssertionError: ").bold().red().to_string() +
-          Formated::format("expected ").red().to_string() +
-          Formated::format(debug_string(self.received)).green().to_string() +
-          Formated::format(" to include ").red().to_string() +
-          Formated::format(debug_string(v)).yellow().to_string()
-        println(msg)
-        print_loc(self)
-        println("")
-        println(Formated::format("- Expected: ").yellow())
-        println(Formated::format("+ Received: ").green())
-        println("")
-        println(
-          Formated::format("- [..., " + debug_string(v) + ", ...]").yellow(),
-        )
-        println(Formated::format("+ " + debug_string(self.received)).green())
-        println("")
-        abort("")
-      }
-    true =>
-      if has {
-        let msg = Formated::format("AssertionError: ").bold().red().to_string() +
-          Formated::format("expected ").red().to_string() +
-          Formated::format(debug_string(self.received)).green().to_string() +
-          Formated::format(" to not include ").red().to_string() +
-          Formated::format(debug_string(v)).yellow().to_string()
-        println(msg)
-        print_loc(self)
-        println("")
-        println(Formated::format("  Received: ").green())
-        println("")
-        println(
-          "  " +
-          Formated::format(debug_string(self.received)).green().to_string(),
         )
         println("")
         abort("")
@@ -390,6 +375,49 @@ pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
           "  " +
           Formated::format(debug_string(self.received)).green().to_string(),
         )
+        println("")
+        abort("")
+      }
+  }
+}
+
+///|
+pub fn to_contain[T : Eq + Show](self : Expect[Array[T]], v : T) -> Unit {
+  let result = self.received.contains(v)
+  match self.reversed {
+    false =>
+      if result == false {
+        let msg = Formated::format("AssertionError: ").bold().red().to_string() +
+          Formated::format("expected ").red().to_string() +
+          Formated::format(debug_string(self.received)).green().to_string() +
+          Formated::format(" to contain ").red().to_string() +
+          Formated::format(debug_string(v)).yellow().to_string()
+        println(msg)
+        print_loc(self)
+        println("")
+        println(Formated::format("- Expected: ").yellow())
+        println(Formated::format("+ Received: ").green())
+        println("")
+        println(Formated::format("- " + debug_string(v)).yellow())
+        println(Formated::format("+ " + debug_string(self.received)).green())
+        println("")
+        abort("")
+      }
+    true =>
+      if result {
+        let msg = Formated::format("AssertionError: ").bold().red().to_string() +
+          Formated::format("expected ").red().to_string() +
+          Formated::format(debug_string(self.received)).green().to_string() +
+          Formated::format(" not to contain ").red().to_string() +
+          Formated::format(debug_string(v)).yellow().to_string()
+        println(msg)
+        print_loc(self)
+        println("")
+        println(Formated::format("- Expected: ").yellow())
+        println(Formated::format("+ Received: ").green())
+        println("")
+        println(Formated::format("- " + debug_string(v)).yellow())
+        println(Formated::format("+ " + debug_string(self.received)).green())
         println("")
         abort("")
       }
