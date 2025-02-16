@@ -11,10 +11,47 @@ struct Expect[T] {
 /// # Examples
 ///
 /// ```mbt
+/// // Basic equality
+/// expect(123).to_be(123);
+/// expect("hello").equal("hello");
+/// expect("hello").not().equal("world");
+///
+/// // Numeric comparisons
 /// expect(123).to_be_greater_than(5);
-/// expect(123).not().to_be_greater_than(125);
-/// expect(1).to_be_greater_than(2); // This will abort
-/// // AssertionError: expected 1 to be > 4
+/// expect(123).to_be_less_than(200);
+/// expect(123).to_be_greater_than_or_equal(123);
+/// expect(123).to_be_less_than_or_equal(123);
+///
+/// // Boolean assertions
+/// expect(true).to_be_truthy();
+/// expect(false).to_be_falsy();
+///
+/// // String matching
+/// expect("hello world").to_match("world");
+/// expect("hello").not().to_match("world");
+///
+/// // Option assertions
+/// let some_val : Option[Int] = Some(1);
+/// let none_val : Option[Int] = None;
+/// expect(some_val).to_be_some();
+/// expect(none_val).to_be_none();
+///
+/// // Result assertions
+/// let ok_val : Result[Int, String] = Ok(1);
+/// let err_val : Result[Int, String] = Err("error");
+/// expect(ok_val).to_be_ok();
+/// expect(err_val).to_be_err();
+///
+/// // Array assertions
+/// expect([1, 2, 3]).to_contain(2);
+/// expect([1, 2, 3]).not().to_contain(4);
+///
+/// // Length assertions
+/// expect("hello").to_have_length(5);
+/// expect([1, 2, 3]).to_have_length(3);
+///
+/// // Floating point comparisons
+/// expect(1.0).close_to(1.0001, 0.001);
 /// ```
 pub fn expect[T](
   t : T,
