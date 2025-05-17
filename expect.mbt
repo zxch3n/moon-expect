@@ -174,7 +174,7 @@ fn contains(s : String, sub : String) -> Bool {
   let mut i = 0
   let mut j = 0
   while i < s.length() {
-    if s.get(i) == sub.get(j) {
+    if s[i] == sub[j] {
       j = j + 1
       if j == sub.length() {
         return true

@@ -39,7 +39,7 @@ fn debug_string[T : Show](value : T) -> String {
 }
 
 ///|
-fn output(self : Formated, logger : &Logger) -> Unit {
+impl Show for Formated with output(self : Formated, logger : &Logger) -> Unit {
   logger.write_string(self.to_string())
 }
 
