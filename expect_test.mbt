@@ -194,12 +194,12 @@ test "panic to_contain" {
 }
 
 ///|
-test "panic to_be_truthy" {
+test "panic to_be_truthy with message" {
   @expect.expect(true, message="Test Message").not().to_be_truthy()
 }
 
 ///|
-test "panic to_be_truthy" {
+test "panic to_be_falsy" {
   @expect.expect(true).to_be_falsy()
 }
 

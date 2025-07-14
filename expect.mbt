@@ -51,7 +51,7 @@ struct Expect[T] {
 /// expect([1, 2, 3]).to_have_length(3);
 ///
 /// // Floating point comparisons
-/// expect(1.0).close_to(1.0001, 0.001);
+/// expect(1.0).close_to(1.0001, tolerance=0.001);
 /// ```
 pub fn expect[T](
   t : T,
