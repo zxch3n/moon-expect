@@ -74,7 +74,7 @@ pub fn[T] not(self : Expect[T]) -> Expect[T] {
 
 ///|
 pub fn[T : Eq + Show] to_be(self : Expect[T], expected : T) -> Unit {
-  equal(self, expected)
+  self.equal(expected)
 }
 
 ///|
@@ -87,7 +87,7 @@ pub fn to_be_truthy(self : Expect[Bool]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be falsy").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
       }
     false =>
       if self.received == false {
@@ -96,7 +96,7 @@ pub fn to_be_truthy(self : Expect[Bool]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be truthy").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
       }
   }
 }
@@ -134,7 +134,7 @@ pub fn[T : Eq + Show] equal(self : Expect[T], expected : T) -> Unit {
           Formated::format(" to equal ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -153,7 +153,7 @@ pub fn[T : Eq + Show] equal(self : Expect[T], expected : T) -> Unit {
           Formated::format(" to not equal ").red().to_string() +
           Formated::format(expected.to_string()).green().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -196,7 +196,7 @@ pub fn to_match(self : Expect[String], expected : String) -> Unit {
           Formated::format(" to include ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -216,7 +216,7 @@ pub fn to_match(self : Expect[String], expected : String) -> Unit {
           Formated::format(" to not include ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -244,7 +244,7 @@ pub fn[T : Show] to_be_none(self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be None").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -262,7 +262,7 @@ pub fn[T : Show] to_be_none(self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be None").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -290,7 +290,7 @@ pub fn[T : Show] to_be_some(self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be Some").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -308,7 +308,7 @@ pub fn[T : Show] to_be_some(self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be Some").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -336,7 +336,7 @@ pub fn[T : Show, D : Show] to_be_ok(self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be Ok").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -355,7 +355,7 @@ pub fn[T : Show, D : Show] to_be_ok(self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be Ok").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -383,7 +383,7 @@ pub fn[T : Show, D : Show] to_be_err(self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be Err").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -401,7 +401,7 @@ pub fn[T : Show, D : Show] to_be_err(self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be Err").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -427,7 +427,7 @@ pub fn[T : Eq + Show] to_contain(self : Expect[Array[T]], v : T) -> Unit {
           Formated::format(" to contain ").red().to_string() +
           Formated::format(debug_string(v)).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -445,7 +445,7 @@ pub fn[T : Eq + Show] to_contain(self : Expect[Array[T]], v : T) -> Unit {
           Formated::format(" not to contain ").red().to_string() +
           Formated::format(debug_string(v)).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -488,7 +488,7 @@ pub fn close_to(
           .red()
           .to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -509,7 +509,7 @@ pub fn close_to(
           .red()
           .to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -538,7 +538,7 @@ pub fn[T : HasLength + Show] to_have_length(
           Formated::format(" to have length ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -556,7 +556,7 @@ pub fn[T : HasLength + Show] to_have_length(
           Formated::format(" not to have length ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -628,7 +628,7 @@ fn[T : Show + Compare] expect_cmp(
       Formated::format(" to be " + symbol_str + " ").red().to_string() +
       Formated::format(debug_string(expected)).yellow().to_string()
     println(msg)
-    print_loc(received)
+    received.print_loc()
     abort("")
   }
 }

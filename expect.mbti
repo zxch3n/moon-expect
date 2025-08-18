@@ -2,7 +2,7 @@
 package "zxch3n/expect"
 
 import(
-  "moonbitlang/core/immut/list"
+  "moonbitlang/core/list"
 )
 
 // Values
@@ -48,5 +48,5 @@ pub trait HasLength {
 }
 impl HasLength for String
 impl[A] HasLength for Array[A]
-impl[A] HasLength for @list.T[A]
+impl[A] HasLength for @list.List[A]
 

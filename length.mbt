@@ -32,6 +32,6 @@ test "Array::length/multiple_elements" {
 }
 
 ///|
-pub impl[A] HasLength for List[A] with length(self) {
+pub impl[A] HasLength for @list.List[A] with length(self) {
   self.length()
 }
