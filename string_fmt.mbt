@@ -1,5 +1,5 @@
 ///|
-typealias List[A] = @immut/list.T[A]
+typealias @immut/list.T as List
 
 ///|
 priv struct Formated {
@@ -34,7 +34,7 @@ priv enum Color {
 }
 
 ///|
-fn debug_string[T : Show](value : T) -> String {
+fn[T : Show] debug_string(value : T) -> String {
   value.to_string()
 }
 
