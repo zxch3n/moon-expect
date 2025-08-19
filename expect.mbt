@@ -53,16 +53,13 @@ struct Expect[T] {
 /// // Floating point comparisons
 /// expect(1.0).close_to(1.0001, tolerance=0.001);
 /// ```
-pub fn expect[T](
-  t : T,
-  loc~ : SourceLoc = _,
-  message~ : String = ""
-) -> Expect[T] {
+#callsite(autofill(loc))
+pub fn[T] expect(t : T, loc~ : SourceLoc, message~ : String = "") -> Expect[T] {
   { received: t, reversed: false, loc, message }
 }
 
 ///|
-pub fn not[T](self : Expect[T]) -> Expect[T] {
+pub fn[T] not(self : Expect[T]) -> Expect[T] {
   {
     received: self.received,
     reversed: if self.reversed {
@@ -76,8 +73,8 @@ pub fn not[T](self : Expect[T]) -> Expect[T] {
 }
 
 ///|
-pub fn to_be[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
-  equal(self, expected)
+pub fn[T : Eq + Show] to_be(self : Expect[T], expected : T) -> Unit {
+  self.equal(expected)
 }
 
 ///|
@@ -90,7 +87,7 @@ pub fn to_be_truthy(self : Expect[Bool]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be falsy").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
       }
     false =>
       if self.received == false {
@@ -99,7 +96,7 @@ pub fn to_be_truthy(self : Expect[Bool]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be truthy").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
       }
   }
 }
@@ -110,7 +107,7 @@ pub fn to_be_falsy(self : Expect[Bool]) -> Unit {
 }
 
 ///|
-fn print_loc[T](self : Expect[T]) -> Unit {
+fn[T] print_loc(self : Expect[T]) -> Unit {
   let s = Formated::format(
       "at " +
       Formated::format(self.loc.to_string()).underline().blue().to_string(),
@@ -126,7 +123,7 @@ fn print_loc[T](self : Expect[T]) -> Unit {
 }
 
 ///|
-pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
+pub fn[T : Eq + Show] equal(self : Expect[T], expected : T) -> Unit {
   match self.reversed {
     false =>
       if self.received != expected {
@@ -137,7 +134,7 @@ pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
           Formated::format(" to equal ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -156,7 +153,7 @@ pub fn equal[T : Eq + Show](self : Expect[T], expected : T) -> Unit {
           Formated::format(" to not equal ").red().to_string() +
           Formated::format(expected.to_string()).green().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -199,7 +196,7 @@ pub fn to_match(self : Expect[String], expected : String) -> Unit {
           Formated::format(" to include ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -219,7 +216,7 @@ pub fn to_match(self : Expect[String], expected : String) -> Unit {
           Formated::format(" to not include ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -234,7 +231,7 @@ pub fn to_match(self : Expect[String], expected : String) -> Unit {
 }
 
 ///|
-pub fn to_be_none[T : Show](self : Expect[T?]) -> Unit {
+pub fn[T : Show] to_be_none(self : Expect[T?]) -> Unit {
   let is_none = match self.received {
     None => true
     Some(_) => false
@@ -247,7 +244,7 @@ pub fn to_be_none[T : Show](self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be None").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -265,7 +262,7 @@ pub fn to_be_none[T : Show](self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be None").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -280,7 +277,7 @@ pub fn to_be_none[T : Show](self : Expect[T?]) -> Unit {
 }
 
 ///|
-pub fn to_be_some[T : Show](self : Expect[T?]) -> Unit {
+pub fn[T : Show] to_be_some(self : Expect[T?]) -> Unit {
   let is_some = match self.received {
     Some(_) => true
     None => false
@@ -293,7 +290,7 @@ pub fn to_be_some[T : Show](self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be Some").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -311,7 +308,7 @@ pub fn to_be_some[T : Show](self : Expect[T?]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be Some").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -326,7 +323,7 @@ pub fn to_be_some[T : Show](self : Expect[T?]) -> Unit {
 }
 
 ///|
-pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
+pub fn[T : Show, D : Show] to_be_ok(self : Expect[Result[T, D]]) -> Unit {
   let is_ok = match self.received {
     Ok(_) => true
     Err(_) => false
@@ -339,7 +336,7 @@ pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be Ok").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -358,7 +355,7 @@ pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be Ok").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -373,7 +370,7 @@ pub fn to_be_ok[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
 }
 
 ///|
-pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
+pub fn[T : Show, D : Show] to_be_err(self : Expect[Result[T, D]]) -> Unit {
   let is_err = match self.received {
     Err(_) => true
     Ok(_) => false
@@ -386,7 +383,7 @@ pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" to be Err").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -404,7 +401,7 @@ pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
           Formated::format(debug_string(self.received)).green().to_string() +
           Formated::format(" not to be Err").red().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -419,7 +416,7 @@ pub fn to_be_err[T : Show, D : Show](self : Expect[Result[T, D]]) -> Unit {
 }
 
 ///|
-pub fn to_contain[T : Eq + Show](self : Expect[Array[T]], v : T) -> Unit {
+pub fn[T : Eq + Show] to_contain(self : Expect[Array[T]], v : T) -> Unit {
   let result = self.received.contains(v)
   match self.reversed {
     false =>
@@ -430,7 +427,7 @@ pub fn to_contain[T : Eq + Show](self : Expect[Array[T]], v : T) -> Unit {
           Formated::format(" to contain ").red().to_string() +
           Formated::format(debug_string(v)).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -448,7 +445,7 @@ pub fn to_contain[T : Eq + Show](self : Expect[Array[T]], v : T) -> Unit {
           Formated::format(" not to contain ").red().to_string() +
           Formated::format(debug_string(v)).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -474,7 +471,7 @@ fn abs(a : Double) -> Double {
 pub fn close_to(
   self : Expect[Double],
   target : Double,
-  tolerance~ : Double = 0.000001
+  tolerance~ : Double = 0.000001,
 ) -> Unit {
   let diff = abs(self.received - target)
   let tolerance = abs(tolerance)
@@ -491,7 +488,7 @@ pub fn close_to(
           .red()
           .to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -512,7 +509,7 @@ pub fn close_to(
           .red()
           .to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -527,9 +524,9 @@ pub fn close_to(
 }
 
 ///|
-pub fn to_have_length[T : HasLength + Show](
+pub fn[T : HasLength + Show] to_have_length(
   self : Expect[T],
-  expected : Int
+  expected : Int,
 ) -> Unit {
   let length = self.received.length()
   match self.reversed {
@@ -541,7 +538,7 @@ pub fn to_have_length[T : HasLength + Show](
           Formated::format(" to have length ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("- Expected: ").yellow())
         println(Formated::format("+ Received: ").green())
@@ -559,7 +556,7 @@ pub fn to_have_length[T : HasLength + Show](
           Formated::format(" not to have length ").red().to_string() +
           Formated::format(expected.to_string()).yellow().to_string()
         println(msg)
-        print_loc(self)
+        self.print_loc()
         println("")
         println(Formated::format("  Received: ").green())
         println("")
@@ -612,10 +609,10 @@ fn assert_cmp(self : CmpSymbol, cmp : Int) -> Bool {
 }
 
 ///|
-fn expect_cmp[T : Show + Compare](
+fn[T : Show + Compare] expect_cmp(
   received : Expect[T],
   expected : T,
-  expected_symbol : CmpSymbol
+  expected_symbol : CmpSymbol,
 ) -> Unit {
   let mut expected_symbol = expected_symbol
   if received.reversed {
@@ -631,45 +628,46 @@ fn expect_cmp[T : Show + Compare](
       Formated::format(" to be " + symbol_str + " ").red().to_string() +
       Formated::format(debug_string(expected)).yellow().to_string()
     println(msg)
-    print_loc(received)
+    received.print_loc()
     abort("")
   }
 }
 
 ///|
-pub fn to_be_greater_than[T : Show + Compare](
+pub fn[T : Show + Compare] to_be_greater_than(
   self : Expect[T],
-  expected : T
+  expected : T,
 ) -> Unit {
   expect_cmp(self, expected, CmpSymbol::Greater)
 }
 
 ///|
-pub fn to_be_less_than[T : Show + Compare](
+pub fn[T : Show + Compare] to_be_less_than(
   self : Expect[T],
-  expected : T
+  expected : T,
 ) -> Unit {
   expect_cmp(self, expected, CmpSymbol::Less)
 }
 
 ///|
-pub fn to_be_less_than_or_equal[T : Show + Compare](
+pub fn[T : Show + Compare] to_be_less_than_or_equal(
   self : Expect[T],
-  expected : T
+  expected : T,
 ) -> Unit {
   expect_cmp(self, expected, CmpSymbol::LessOrEqual)
 }
 
 ///|
-pub fn to_be_greater_than_or_equal[T : Show + Compare](
+pub fn[T : Show + Compare] to_be_greater_than_or_equal(
   self : Expect[T],
-  expected : T
+  expected : T,
 ) -> Unit {
   expect_cmp(self, expected, CmpSymbol::GreaterOrEqual)
 }
 
 ///|
-pub fn todo[T](reason~ : String = "", loc~ : SourceLoc = _) -> T {
+#callsite(autofill(loc))
+pub fn[T] todo(reason~ : String = "", loc~ : SourceLoc) -> T {
   let msg = Formated::format("TODO: ").bold().red().to_string() +
     Formated::format(reason).yellow().to_string() +
     " at " +
@@ -679,7 +677,8 @@ pub fn todo[T](reason~ : String = "", loc~ : SourceLoc = _) -> T {
 }
 
 ///|
-pub fn not_implemented[T](reason~ : String = "", loc~ : SourceLoc = _) -> T {
+#callsite(autofill(loc))
+pub fn[T] not_implemented(reason~ : String = "", loc~ : SourceLoc) -> T {
   let msg = Formated::format("Not implemented: ").bold().red().to_string() +
     Formated::format(reason).yellow().to_string() +
     " at " +
@@ -689,7 +688,8 @@ pub fn not_implemented[T](reason~ : String = "", loc~ : SourceLoc = _) -> T {
 }
 
 ///|
-pub fn panic[T](reason~ : String = "", loc~ : SourceLoc = _) -> T {
+#callsite(autofill(loc))
+pub fn[T] panic(reason~ : String = "", loc~ : SourceLoc) -> T {
   let msg = Formated::format("Panic: ").bold().red().to_string() +
     Formated::format(reason).yellow().to_string() +
     " at " +

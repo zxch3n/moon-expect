@@ -1,12 +1,9 @@
 ///|
-typealias List[A] = @immut/list.T[A]
-
-///|
 priv struct Formated {
   str : String
   bg_color : Color?
   color : Color?
-  formats : @immut/list.T[Format]
+  formats : Array[Format]
 }
 
 ///|
@@ -34,7 +31,7 @@ priv enum Color {
 }
 
 ///|
-fn debug_string[T : Show](value : T) -> String {
+fn[T : Show] debug_string(value : T) -> String {
   value.to_string()
 }
 
@@ -45,50 +42,31 @@ impl Show for Formated with output(self : Formated, logger : &Logger) -> Unit {
 
 ///|
 fn Formated::to_string(self : Formated) -> String {
-  let mut styles = List::Nil
+  let styles = []
   match self.color {
-    Some(color) => styles = List::Cons(to_color_code(color), styles)
+    Some(color) => styles.push(color.to_color_code())
     None => ()
   }
   match self.bg_color {
-    Some(bg_color) => styles = List::Cons(to_bg_color_code(bg_color), styles)
+    Some(bg_color) => styles.push(bg_color.to_bg_color_code())
     None => ()
   }
-  let mut formats = self.formats
-  loop formats {
-    List::Cons(format, rest) => {
-      formats = rest
-      match format {
-        Bold => styles = List::Cons("1", styles)
-        Underline => styles = List::Cons("4", styles)
-        Blink => styles = List::Cons("5", styles)
-        Inverse => styles = List::Cons("7", styles)
-        Hidden => styles = List::Cons("8", styles)
-        Strikethrough => styles = List::Cons("9", styles)
-        Italic => styles = List::Cons("3", styles)
-      }
-      continue rest
+  for format in self.formats {
+    match format {
+      Bold => styles.push("1")
+      Underline => styles.push("4")
+      Blink => styles.push("5")
+      Inverse => styles.push("7")
+      Hidden => styles.push("8")
+      Strikethrough => styles.push("9")
+      Italic => styles.push("3")
     }
-    List::Nil => ()
   }
-  match styles {
-    List::Cons(_, _) => {
-      let mut ans = "["
-      loop styles {
-        List::Cons(style, rest) => {
-          styles = rest
-          if ans.length() == 0 {
-            ans = style
-          } else {
-            ans = ans + ";" + style
-          }
-          continue rest
-        }
-        List::Nil => ()
-      }
-      ans + "m" + self.str + "[0m"
-    }
-    List::Nil => self.str
+  if styles.length() > 0 {
+    let style_string = styles.join(";")
+    "[\{style_string}m\{self.str}[0m"
+  } else {
+    self.str
   }
 }
 
@@ -124,7 +102,7 @@ fn to_bg_color_code(self : Color) -> String {
 
 ///|
 fn Formated::format(str : String) -> Formated {
-  { str, bg_color: None, color: None, formats: List::Nil }
+  { str, bg_color: None, color: None, formats: [] }
 }
 
 ///|
@@ -313,7 +291,7 @@ fn bold(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Bold, self.formats),
+    formats: [Bold, ..self.formats],
   }
 }
 
@@ -323,7 +301,7 @@ fn underline(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Underline, self.formats),
+    formats: [Underline, ..self.formats],
   }
 }
 
@@ -333,7 +311,7 @@ fn blink(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Blink, self.formats),
+    formats: [Blink, ..self.formats],
   }
 }
 
@@ -343,7 +321,7 @@ fn inverse(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Inverse, self.formats),
+    formats: [Inverse, ..self.formats],
   }
 }
 
@@ -353,7 +331,7 @@ fn hidden(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Hidden, self.formats),
+    formats: [Hidden, ..self.formats],
   }
 }
 
@@ -363,7 +341,7 @@ fn strikethrough(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Strikethrough, self.formats),
+    formats: [Strikethrough, ..self.formats],
   }
 }
 
@@ -373,6 +351,6 @@ fn italic(self : Formated) -> Formated {
     str: self.str,
     bg_color: self.bg_color,
     color: self.color,
-    formats: List::Cons(Italic, self.formats),
+    formats: [Italic, ..self.formats],
   }
 }

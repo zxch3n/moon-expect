@@ -1,0 +1,52 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zxch3n/expect"
+
+import(
+  "moonbitlang/core/list"
+)
+
+// Values
+#callsite(autofill(loc))
+fn[T] expect(T, loc~ : SourceLoc, message? : String) -> Expect[T]
+
+#callsite(autofill(loc))
+fn[T] not_implemented(reason? : String, loc~ : SourceLoc) -> T
+
+#callsite(autofill(loc))
+fn[T] panic(reason? : String, loc~ : SourceLoc) -> T
+
+#callsite(autofill(loc))
+fn[T] todo(reason? : String, loc~ : SourceLoc) -> T
+
+// Errors
+
+// Types and methods
+type Expect[T]
+fn Expect::close_to(Self[Double], Double, tolerance? : Double) -> Unit
+fn[T : Eq + Show] Expect::equal(Self[T], T) -> Unit
+fn[T] Expect::not(Self[T]) -> Self[T]
+fn[T : Eq + Show] Expect::to_be(Self[T], T) -> Unit
+fn[T : Show, D : Show] Expect::to_be_err(Self[Result[T, D]]) -> Unit
+fn Expect::to_be_falsy(Self[Bool]) -> Unit
+fn[T : Show + Compare] Expect::to_be_greater_than(Self[T], T) -> Unit
+fn[T : Show + Compare] Expect::to_be_greater_than_or_equal(Self[T], T) -> Unit
+fn[T : Show + Compare] Expect::to_be_less_than(Self[T], T) -> Unit
+fn[T : Show + Compare] Expect::to_be_less_than_or_equal(Self[T], T) -> Unit
+fn[T : Show] Expect::to_be_none(Self[T?]) -> Unit
+fn[T : Show, D : Show] Expect::to_be_ok(Self[Result[T, D]]) -> Unit
+fn[T : Show] Expect::to_be_some(Self[T?]) -> Unit
+fn Expect::to_be_truthy(Self[Bool]) -> Unit
+fn[T : Eq + Show] Expect::to_contain(Self[Array[T]], T) -> Unit
+fn[T : HasLength + Show] Expect::to_have_length(Self[T], Int) -> Unit
+fn Expect::to_match(Self[String], String) -> Unit
+
+// Type aliases
+
+// Traits
+pub trait HasLength {
+  length(Self) -> Int
+}
+impl HasLength for String
+impl[A] HasLength for Array[A]
+impl[A] HasLength for @list.List[A]
+
